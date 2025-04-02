@@ -27,8 +27,7 @@ const userSchema = new Schema({
     password: {
         type: String,
         required: [true, "Password is required"],
-        minlength: [6, "Password must be at least 6 characters"],
-        trim: true
+        minlength: [6, "Password must be at least 6 characters"]
     },
     avatar: {
         type: String,
@@ -36,7 +35,6 @@ const userSchema = new Schema({
     },
     coverImage: {
         type: String,
-        required: true,
     },
     watchHistory: [
         {
@@ -44,6 +42,9 @@ const userSchema = new Schema({
             ref: "Video",
         },
     ],
+    refreshToken: {
+        type: String
+    },
 }, { timestamps: true });
 
 userSchema.pre("save", async function (next) {

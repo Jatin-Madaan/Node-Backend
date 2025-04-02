@@ -27,14 +27,4 @@ const upload = multer({
     limits: { fileSize: 5 * 1024 * 1024 } // Limit file size to 5MB
 });
 
-// Middleware function for handling file uploads
-const uploadMiddleware = (req, res, next) => {
-    upload.single('file')(req, res, (err) => {
-        if (err) {
-            return res.status(400).json({ error: err.message });
-        }
-        next();
-    });
-};
-
-export default uploadMiddleware;
+export default upload;
