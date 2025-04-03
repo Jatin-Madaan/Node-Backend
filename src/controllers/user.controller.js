@@ -7,6 +7,7 @@ import { uploadOnCloudinary } from '../utils/cloudinary.js';
 const registerUser = asyncHandler(async (req, res) => {
     const { username, email, fullName, password } = req.body;
 
+    console.log("request received: ", req.files);
     // Validate request body
     if ([username, email, fullName, password].some(field => field?.trim() === '')) {
         throw new ApiError(400, 'All fields are required');
@@ -19,8 +20,8 @@ const registerUser = asyncHandler(async (req, res) => {
         throw new ApiError(409, 'User already exists');
     }
 
-    const avatarPath = req.files?.avatar[0]?.path;
-    const coverImagePath = req.files?.coverImage[0]?.path;
+    const avatarPath = req.files?.avatar?.[0]?.path;
+    const coverImagePath = req.files?.coverImage?.[0]?.path;
     if(!avatarPath) {
         throw new ApiError(400, 'Avatar image is required');
     }
@@ -41,7 +42,7 @@ const registerUser = asyncHandler(async (req, res) => {
         coverImage: coverImage?.url || ""
     });
 
-    const createdUser = await User.findById(newUser._id)
+    const createdUser = await User.findById(user._id)
         .select('-password -refreshToken');
 
     if (!createdUser) {

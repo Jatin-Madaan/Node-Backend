@@ -1,7 +1,10 @@
-import { v2 as cloudinay } from 'cloudinary';
+// This module handles uploading files to Cloudinary.
+import { v2 as cloudinary } from 'cloudinary';
 import fs from 'fs';
+import dotenv from 'dotenv';
 
-cloudinay.config({
+dotenv.config()
+cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,
     api_secret: process.env.CLOUDINARY_API_SECRET
@@ -9,16 +12,36 @@ cloudinay.config({
 
 const uploadOnCloudinary = async (localFilePath) => {
     try {
-        if(!localFilePath) return null;
-        const response = await cloudinay.uploader.upload(localFilePath, {
+        if (!localFilePath) {
+            console.log("No file path provided");
+            return null;
+        }
+
+        // Check if file exists
+        if (!fs.existsSync(localFilePath)) {
+            console.log("File not found:", localFilePath);
+            return null;
+        }
+
+        // Upload the file
+        const response = await cloudinary.uploader.upload(localFilePath, {
             resource_type: "auto"
         });
-        // file uploaded successfully
-        console.log("file uploaded : " , response.url);
-        return response;
-    } catch (error) {
+
+        // File uploaded successfully
+        console.log("File uploaded successfully:", response.url);
+        
+        // Remove the locally saved temporary file
         fs.unlinkSync(localFilePath);
-        // remove locally saved temporary file
+
+        return response;
+
+    } catch (error) {
+        console.error("Cloudinary upload error:", error);
+        // Clean up the local file
+        if (localFilePath && fs.existsSync(localFilePath)) {
+            fs.unlinkSync(localFilePath);
+        }
         return null;
     }
 }
