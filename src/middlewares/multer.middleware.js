@@ -7,7 +7,7 @@ const storage = multer.diskStorage({
         cb(null, 'public/uploads/'); // Store files in a dedicated uploads directory
     },
     filename: function (req, file, cb) {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        const uniquePrefix = Math.round(Math.random() * 1E9);
         cb(null, file.originalname);
     }
 });
